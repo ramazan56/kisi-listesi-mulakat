@@ -1,0 +1,76 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<script src="https://code.jquery.com/jquery-3.5.1.js" type="text/javascript"></script>
+
+<script src="https://cdn.jsdelivr.net/alasql/0.3/alasql.min.js" type="text/javascript"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.7.12/xlsx.core.min.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.22/css/jquery.dataTables.css">
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.22/js/jquery.dataTables.js"></script>
+
+
+<script>
+
+    $(document).ready(function () {
+        var t = $('#example').DataTable({
+            columns: [
+                { title: "Name" },
+                { title: "Surname" },
+                { title: "Address" },
+                { title: "Email" }
+            ]
+        });
+
+        $("#btnSubmit").on("click", function () {
+            var txtName = $("#txtName").val();
+            var txtSurname = $("#txtSurname").val();
+            var txtAddress = $("#txtAddress").val();
+            var txtMail = $("#txtMail").val();
+            addNewRow(txtName, txtSurname, txtAddress, txtMail);
+            saveFile(txtName, txtSurname, txtAddress, txtMail);
+        });
+
+        function saveFile(name, surname, address, email) {
+            var data = [{ person: name }, { person: surname }, { person: address }, { person: email }];
+            var opts = [{ sheetid: 'One', header: true }];
+            var res = alasql('SELECT * INTO XLSX("restest344b.xlsx",?) FROM ?', [opts, [data]]);
+        }
+
+        function addNewRow(name, surname, address, email) {
+            t.row.add([name, surname, address, email]).draw(false);
+        }
+
+    }); 
+</script>
+
+<div class="text-center">
+    <h1 class="display-4">Kişi Tablosu</h1>
+</div>
+
+<form>
+    <div class="form-row">
+        <div class="form-group col-md-6">
+            <label for="txtName">İsim</label>
+            <input type="text" class="form-control" id="txtName" name="txtName" placeholder="İsim">
+        </div>
+        <div class="form-group col-md-6">
+            <label for="txtSurname">Soyisim</label>
+            <input type="text" class="form-control" id="txtSurname" name="txtSurname" placeholder="Soyisim">
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="txtAddress">Adres</label>
+        <input type="text" class="form-control" id="txtAddress" name="txtAddress" placeholder="Adres">
+    </div>
+    <div class="form-group">
+        <label for="txtMail">Mail</label>
+        <input type="email" class="form-control" id="txtMail" name="txtMail" placeholder="Mail@gmail.com">
+    </div>
+    <div class="form-group">
+        <a id="btnSubmit" name="btnSubmit" class="btn btn-outline-primary">Yeni Kişi Ekle!</a>
+    </div>
+</form>
+<br><br><br><br><br>
+<h1>Kişi Listesi</h1>
+
+<table id="example" class="display" width="100%"></table>
